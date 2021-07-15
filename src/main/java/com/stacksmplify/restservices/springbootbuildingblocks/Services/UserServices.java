@@ -1,6 +1,7 @@
 package com.stacksmplify.restservices.springbootbuildingblocks.Services;
 
 import com.stacksmplify.restservices.springbootbuildingblocks.Entities.User;
+import com.stacksmplify.restservices.springbootbuildingblocks.exceptions.UserNotFoundException;
 import com.stacksmplify.restservices.springbootbuildingblocks.repositeries.UserRepositery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,16 @@ public class UserServices {
         return userRepositery.save(user);
     }
 
-    public Optional<User> getUserById(Long id)
+    public Optional<User> getUserById(Long id) throws UserNotFoundException
     {
 
         Optional<User> user=userRepositery.findById(id);
+
+        if(!user.isPresent())
+        {
+            throw new UserNotFoundException("User is not present");
+        }
+
         return user;
     }
 
