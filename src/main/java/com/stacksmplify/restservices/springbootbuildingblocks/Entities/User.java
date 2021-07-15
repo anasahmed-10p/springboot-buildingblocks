@@ -3,6 +3,7 @@ package com.stacksmplify.restservices.springbootbuildingblocks.Entities;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name="user")
@@ -26,6 +27,16 @@ public class User {
  @Column(nullable = false,length=50)
  private String role;
 
+@OneToMany(mappedBy="user")
+ private List<Order> orders;
+
+ public List<Order> getOrders() {
+  return orders;
+ }
+
+ public void setOrders(List<Order> orders) {
+  this.orders = orders;
+ }
 
  public User() {
  }
