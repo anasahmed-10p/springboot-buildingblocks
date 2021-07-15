@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public User createUser(@RequestBody User user)
+    public User createUser(@Valid @RequestBody User user)
     {
         try{
             return userService.createUser(user);

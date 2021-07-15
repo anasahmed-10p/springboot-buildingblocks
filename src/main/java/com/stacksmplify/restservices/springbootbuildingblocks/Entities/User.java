@@ -1,6 +1,8 @@
 package com.stacksmplify.restservices.springbootbuildingblocks.Entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="user")
@@ -9,6 +11,9 @@ public class User {
  @Id
  @GeneratedValue
  private long id;
+
+ @NotEmpty(message="First name cannot be empty")
+ @Size(min=2,message="First name length cannot be less then 1")
  private String firstName;
  private String lastName;
 
