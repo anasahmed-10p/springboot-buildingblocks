@@ -2,6 +2,7 @@ package com.stacksmplify.restservices.springbootbuildingblocks.Controllers;
 
 import com.stacksmplify.restservices.springbootbuildingblocks.Entities.User;
 import com.stacksmplify.restservices.springbootbuildingblocks.Services.UserServices;
+import com.stacksmplify.restservices.springbootbuildingblocks.exceptions.UserNameAlreadyPresent;
 import com.stacksmplify.restservices.springbootbuildingblocks.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,13 @@ public class UserController {
     @PostMapping("/users")
     public User createUser(@RequestBody User user)
     {
-        return userService.createUser(user);
+        try{
+            return userService.createUser(user);
+
+        }catch(UserNameAlreadyPresent ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,ex.getMessage());
+        }
     }
 
     @GetMapping("/users/{id}")
@@ -44,7 +51,20 @@ public class UserController {
     @PutMapping("/users/{id}")
     public User updateUserById(@PathVariable("id") long id,@RequestBody User user)
     {
-        return userService.updateUserById(user,id);
+        try{
+            return userService.updateUserById(user,id);
+
+        }catch (UserNotFoundException ex)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,ex.getMessage());
+
+        }catch(UserNameAlreadyPresent ex2)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,ex2.getMessage());
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
     }
 
     @DeleteMapping("/users/{id}")

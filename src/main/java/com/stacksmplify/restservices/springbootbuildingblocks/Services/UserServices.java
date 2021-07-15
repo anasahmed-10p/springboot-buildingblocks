@@ -1,10 +1,13 @@
 package com.stacksmplify.restservices.springbootbuildingblocks.Services;
 
 import com.stacksmplify.restservices.springbootbuildingblocks.Entities.User;
+import com.stacksmplify.restservices.springbootbuildingblocks.exceptions.UserNameAlreadyPresent;
 import com.stacksmplify.restservices.springbootbuildingblocks.exceptions.UserNotFoundException;
 import com.stacksmplify.restservices.springbootbuildingblocks.repositeries.UserRepositery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +23,15 @@ public class UserServices {
         return userRepositery.findAll();
     }
 
-    public User createUser(User user)
+    public User createUser(User user) throws UserNameAlreadyPresent
     {
+        User user1=userRepositery.findByUserName(user.getUserName());
+
+        if(user1!=null)
+        {
+
+            throw new UserNameAlreadyPresent("Username already present");
+        }
         return userRepositery.save(user);
     }
 
@@ -38,18 +48,37 @@ public class UserServices {
         return user;
     }
 
-    public User updateUserById(User user,long id)
+    public User updateUserById(User user,long id) throws Exception
     {
+        Optional<User> optionalUser=userRepositery.findById(id);
+        if(!optionalUser.isPresent())
+        {
+            throw new UserNotFoundException("User not Present");
+        }
+        else{
+            List<User> user2=userRepositery.findAll();
+            for(int i=0;i<user2.size();i++)
+            {
+                if(user2.get(i).getUserName().equals(user.getUserName()) && user2.get(i).getId()!=user.getId())
+                {
+                    throw new UserNameAlreadyPresent("User name already present");
+                }
+            }
+
+        }
+
         user.setId(id);
         return userRepositery.save(user);
     }
 
     public void deleteUserById(Long id)
     {
-        if(userRepositery.findById(id).isPresent())
+        Optional<User> optionalUser=userRepositery.findById(id);
+        if(!optionalUser.isPresent())
         {
-            userRepositery.deleteById(id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User is not Present");
         }
+        userRepositery.deleteById(id);
     }
 
     public User findByUserName(String userName)
