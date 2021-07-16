@@ -6,6 +6,7 @@ import com.stacksmplify.restservices.springbootbuildingblocks.exceptions.UserNam
 import com.stacksmplify.restservices.springbootbuildingblocks.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -14,19 +15,21 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Validated
+@RequestMapping(value="/users")
 public class UserController {
 
     @Autowired
     private UserServices userService;
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> getAllUsers()
     {
 
         return userService.getAllUsers();
     }
 
-    @PostMapping("/users")
+    @PostMapping
     public User createUser(@Valid @RequestBody User user)
     {
         try{
@@ -38,7 +41,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public Optional<User> getUserById(@PathVariable("id") long id)
     {
         try {
@@ -49,7 +52,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/{id}")
     public User updateUserById(@PathVariable("id") long id,@RequestBody User user)
     {
         try{
@@ -68,13 +71,13 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable("id") long id)
     {
         userService.deleteUserById(id);
     }
 
-    @GetMapping("/users/byusername/{username}")
+    @GetMapping("/byusername/{username}")
     public User findUserByUserName(@PathVariable("username") String userName) throws UserNotFoundException
     {
        User user=userService.findByUserName(userName);
